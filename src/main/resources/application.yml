@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: freeThoughts
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: "*****************"
+            client-secret: "******************"
+            scope:
+              - email
+              - profile
+            redirect-uri: http://localhost:8080/oauth2/callback/google
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            token-uri: https://oauth2.googleapis.com/token
+
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/freethoughts
+    username: root
+    password: "*************"
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8080
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  jaeger:
+    endpoint: "jaeger:14250"
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [jaeger]
